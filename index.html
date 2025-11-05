@@ -4,123 +4,203 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Supermercado Ofertão do Dia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 
-    <!-- CSS Integrado -->
+    <!-- Estilos CSS -->
     <style>
         :root {
-            --primary-red: #d92329; --primary-yellow: #ffcb0c; --dark-text: #333;
+            --primary-red: #d92329; --primary-yellow: #ffcb0c; --dark-text: #2c2c2c;
             --light-text: #fff; --edit-blue: #007bff; --delete-red: #dc3545;
-            --add-green: #28a745; --disabled-gray: #c0c0c0;
+            --add-green: #28a745; --disabled-gray: #c0c0c0; --background-gray: #f7f7f7;
+            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            --header-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f5f5f5; }
-        .header { background-color: var(--primary-red); padding: 20px 0; text-align: center; border-bottom: 5px solid var(--primary-yellow); }
-        .header h1 { font-size: 3rem; color: var(--light-text); text-transform: uppercase; font-weight: 900; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        .product-card { background-color: var(--primary-yellow); border-radius: 15px; text-align: center; padding: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
-        .product-card img { max-width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; }
-        .product-card .product-name { font-size: 1.1rem; color: var(--dark-text); font-weight: bold; margin-bottom: 15px; flex-grow: 1; }
-        .product-card .product-price { background-color: var(--primary-red); color: var(--light-text); font-size: 1.8rem; font-weight: bold; padding: 10px; border-radius: 10px; display: inline-block; margin: 0 auto 15px; border: 2px solid var(--light-text); }
-        footer { text-align: center; padding: 20px; background-color: #333; color: #ccc; margin-top: 30px; }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--background-gray);
+            color: var(--dark-text);
+        }
+        .header { 
+            background-color: var(--primary-red); padding: 20px 0; text-align: center; 
+            border-bottom: 5px solid var(--primary-yellow); box-shadow: var(--header-shadow);
+        }
+        .header h1 { 
+            font-size: 3rem; color: var(--light-text); text-transform: uppercase; 
+            font-weight: 900; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); 
+        }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 15px; }
+        #loading-message { text-align: center; font-size: 1.2rem; padding: 40px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+        .product-card { 
+            background-color: #fff; border-radius: 15px; text-align: center; 
+            padding: 20px; box-shadow: var(--card-shadow); display: flex; flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .product-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.12); }
+        .product-card img { max-width: 100%; height: 180px; object-fit: contain; margin-bottom: 15px; }
+        .product-card .product-name { font-size: 1.2rem; color: var(--dark-text); font-weight: 700; margin-bottom: 15px; flex-grow: 1; }
+        .product-card .product-price { 
+            background-color: var(--primary-red); color: var(--light-text); font-size: 2rem; 
+            font-weight: 900; padding: 10px 20px; border-radius: 10px; display: inline-block; 
+            margin: 0 auto 20px; border: 3px solid var(--primary-yellow);
+        }
+        .add-to-cart-btn { 
+            background-color: var(--add-green); color: white; padding: 14px; border: none; 
+            border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        .add-to-cart-btn:hover { background-color: #218838; }
+        footer { text-align: center; padding: 25px; background-color: #333; color: #ccc; margin-top: 40px; }
         .admin-text-wrapper { position: relative; display: inline-block; }
         #admin-trigger { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer; }
-        .add-to-cart-btn { background-color: var(--add-green); color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; width: 100%; }
-        #cart-button { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background-color: var(--primary-red); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 999; }
-        #cart-button svg { width: 32px; height: 32px; fill: white; }
-        #cart-count { position: absolute; top: -5px; right: -5px; background-color: var(--add-green); color: white; border-radius: 50%; width: 24px; height: 24px; font-size: 0.8rem; display: flex; justify-content: center; align-items: center; font-weight: bold; }
-        #cart-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); z-index: 1000; }
-        #cart-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 500px; max-height: 90vh; background-color: white; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; }
-        #cart-modal h2 { padding: 20px; text-align: center; flex-shrink: 0; }
-        #cart-items { flex-grow: 1; overflow-y: auto; padding: 0 20px; }
-        .cart-item { display: flex; align-items: center; margin-bottom: 15px; }
-        .cart-item-info { flex-grow: 1; }
+        #cart-button { 
+            position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; 
+            background-color: var(--primary-red); border-radius: 50%; display: flex; 
+            justify-content: center; align-items: center; cursor: pointer; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3); z-index: 999;
+            transition: transform 0.3s ease;
+        }
+        #cart-button:hover { transform: scale(1.1); }
+        #cart-button svg { width: 34px; height: 34px; fill: white; }
+        #cart-count { 
+            position: absolute; top: -5px; right: -5px; background-color: var(--primary-yellow); 
+            color: var(--dark-text); border-radius: 50%; width: 26px; height: 26px; font-size: 0.9rem; 
+            display: flex; justify-content: center; align-items: center; font-weight: 700;
+            border: 2px solid var(--light-text);
+        }
+        #cart-modal-overlay { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.6); z-index: 1000; backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        #cart-modal { 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 90%; max-width: 550px; max-height: 90vh; background-color: white; 
+            border-radius: 15px; display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        #cart-modal h2 { padding: 25px; text-align: center; flex-shrink: 0; font-size: 1.8rem; background-color: #f9f9f9; border-bottom: 1px solid #eee;}
+        #cart-items { flex-grow: 1; overflow-y: auto; padding: 20px; }
+        .cart-item { display: flex; align-items: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        .cart-item:last-child { border-bottom: none; margin-bottom: 0; }
+        .cart-item-info { flex-grow: 1; margin-right: 15px;}
+        .cart-item-info p { margin: 0; }
+        .cart-item-info .item-name { font-weight: 700; font-size: 1.1rem; }
+        .cart-item-info .item-price { font-size: 1rem; color: #555; }
         .cart-item-quantity { display: flex; align-items: center; }
-        .cart-item-quantity button { width: 30px; height: 30px; border: 1px solid #ddd; cursor: pointer; background: #f0f0f0; }
-        .cart-item-quantity span { padding: 0 10px; font-weight: bold; }
-        .cart-footer { padding: 20px; border-top: 1px solid #eee; flex-shrink: 0; background: #fff; }
-        #cart-total { font-size: 1.2rem; font-weight: bold; text-align: right; }
-        .cart-actions { display: flex; justify-content: space-between; margin-top: 20px; flex-wrap: wrap; gap: 10px; }
-        .whatsapp-btn { background-color: #25D366; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; text-align: center; text-decoration: none; flex-grow: 1; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .whatsapp-btn svg { width: 20px; height: 20px; fill: white; }
-        .close-btn { background-color: var(--delete-red); color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .delivery-options { margin-bottom: 20px; }
-        .delivery-options legend { font-weight: bold; margin-bottom: 10px; }
-        #delivery-info { font-size: 0.9rem; color: var(--dark-text); margin-top: 10px; text-align: center; }
+        .cart-item-quantity button { width: 32px; height: 32px; border: 1px solid #ddd; cursor: pointer; background: #f0f0f0; border-radius: 8px; font-size: 1.2rem; }
+        .cart-item-quantity span { padding: 0 15px; font-weight: bold; font-size: 1.1rem; }
+        .cart-footer { padding: 25px; border-top: 1px solid #eee; flex-shrink: 0; background: #f9f9f9; }
+        #cart-total { font-size: 1.4rem; font-weight: 700; text-align: right; margin-bottom: 20px;}
+        .cart-actions { display: flex; justify-content: space-between; gap: 15px; }
+        .action-btn { padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; flex-grow: 1; text-align: center; text-decoration: none; transition: opacity 0.3s ease; }
+        .action-btn:hover { opacity: 0.85; }
+        .whatsapp-btn { background-color: #25D366; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .whatsapp-btn svg { width: 22px; height: 22px; fill: white; }
+        .close-btn { background-color: var(--delete-red); color: white; }
+        .delivery-options { margin-bottom: 20px; border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
+        .delivery-options legend { font-weight: bold; margin-bottom: 10px; padding: 0 5px; }
+        .delivery-options div { margin-bottom: 5px; }
+        #delivery-info { font-size: 0.9rem; color: var(--dark-text); margin-top: 15px; text-align: center; font-weight: 500;}
         input[type="radio"]:disabled + label { color: var(--disabled-gray); cursor: not-allowed; }
-        #admin-login-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 320px; padding: 30px; background: #fff; border-radius: 10px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); z-index: 1001; }
-        #admin-panel-section { display: none; background: white; padding: 30px; margin-top: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; color: #555; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
-        .login-btn { width: 100%; padding: 12px; background-color: var(--primary-red); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; font-weight: bold; margin-top: 10px; }
-        #add-edit-form { display: flex; flex-wrap: wrap; gap: 15px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 30px; }
-        #add-edit-form .form-group { flex: 1 1 200px; }
-        #add-edit-form button { flex-basis: 100%; }
-        .admin-product-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
-        .admin-product-item img { width: 50px; height: 50px; object-fit: contain; margin-right: 15px; }
-        .admin-product-item p { flex-grow: 1; }
-        .admin-product-actions button { padding: 8px 12px; border: none; color: white; border-radius: 5px; cursor: pointer; margin-left: 10px; }
+        #admin-login-panel, #admin-panel-section { display: none; }
+        .admin-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 340px; padding: 30px; background: #fff; border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); z-index: 1001;
+        }
+        #admin-panel-section {
+            background: white; padding: 30px; margin-top: 30px; border-radius: 15px; 
+            box-shadow: var(--card-shadow);
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #555; font-weight: 700; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; }
+        .login-btn { 
+            width: 100%; padding: 14px; background-color: var(--primary-red); color: white; 
+            border: none; border-radius: 8px; cursor: pointer; font-size: 1.1rem; 
+            font-weight: bold; margin-top: 10px; transition: background-color 0.3s ease;
+        }
+        .login-btn:hover { background-color: #b81c21; }
+        #add-edit-form { padding: 25px; border: 1px solid #ddd; border-radius: 12px; margin-bottom: 30px; background-color: #fcfcfc; }
+        .admin-product-item { 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 15px 10px; border-bottom: 1px solid #eee; 
+        }
+        .admin-product-item:last-child { border-bottom: none; }
+        .admin-product-item img { width: 60px; height: 60px; object-fit: contain; margin-right: 15px; border-radius: 8px; }
+        .admin-product-item p { flex-grow: 1; font-weight: 500; }
+        .admin-product-actions button { padding: 8px 12px; border: none; color: white; border-radius: 5px; cursor: pointer; margin-left: 10px; transition: opacity 0.3s ease;}
+        .admin-product-actions button:hover { opacity: 0.8; }
         .edit-btn { background-color: var(--edit-blue); }
         .delete-btn { background-color: var(--delete-red); }
-        #logout-button { background-color: var(--dark-text); color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; border: none; display: block; width: fit-content; margin: 20px auto 0; }
+        #logout-button { background-color: var(--dark-text); color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; display: block; width: fit-content; margin: 20px auto 0; }
+        #admin-info { background-color: #fffbe6; border: 1px solid #ffe58f; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
     <header class="header"><h1>Ofertão do Dia</h1></header>
 
-    <div class="container" id="product-section">
+    <main class="container" id="product-section">
+        <div id="loading-message">Carregando ofertas...</div>
         <div class="product-grid" id="product-grid"></div>
-    </div>
+    </main>
 
-    <div class="container" id="admin-panel-section">
+    <section class="container" id="admin-panel-section">
         <h1>Painel do Administrador</h1>
-        <section>
-            <h2 id="form-title">Adicionar Novo Produto</h2>
+        <div id="admin-info">
+            <strong>Atenção:</strong> Este painel é uma ferramenta para <strong>visualizar e testar</strong> as mudanças. Para salvar as alterações de forma permanente, você deve editar o arquivo <code>products.json</code> diretamente no GitHub.
+        </div>
+        <article>
+            <h2 id="form-title">Adicionar Novo Produto (Simulação)</h2>
             <form id="add-edit-form">
                 <div class="form-group"><label for="admin-product-name">Nome do Produto</label><input type="text" id="admin-product-name" required></div>
                 <div class="form-group"><label for="admin-product-price">Preço (ex: 24.99)</label><input type="number" step="0.01" id="admin-product-price" required></div>
                 <div class="form-group"><label for="admin-product-image">URL da Imagem</label><input type="url" id="admin-product-image" required></div>
                 <button type="submit" id="form-submit-btn" class="login-btn">Adicionar Produto</button>
             </form>
-        </section>
-        <section>
-            <h2>Gerenciar Produtos</h2>
+        </article>
+        <article>
+            <h2>Gerenciar Produtos (Simulação)</h2>
             <div id="admin-product-list"></div>
-        </section>
+        </article>
         <button id="logout-button">Sair do Painel</button>
-    </div>
+    </section>
 
     <div id="cart-button">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
         <span id="cart-count">0</span>
     </div>
 
-    <div id="cart-modal-overlay">
+    <aside id="cart-modal-overlay">
         <div id="cart-modal">
             <h2>Meu Carrinho</h2>
             <div id="cart-items"></div>
             <div class="cart-footer">
                 <fieldset class="delivery-options">
                     <legend>Opção de Envio</legend>
-                    <div><input type="radio" id="pickup-option" name="delivery_method" value="Retirar na Loja" checked><label for="pickup-option">Retirar na Loja</label></div>
-                    <div><input type="radio" id="delivery-option" name="delivery_method" value="Entrega"><label for="delivery-option">Entrega</label></div>
+                    <div><input type="radio" id="pickup-option" name="delivery_method" value="Retirar na Loja" checked><label for="pickup-option"> Retirar na Loja</label></div>
+                    <div><input type="radio" id="delivery-option" name="delivery_method" value="Entrega"><label for="delivery-option"> Entrega</label></div>
                 </fieldset>
                 <p id="delivery-info"></p>
                 <p id="cart-total">Total: R$ 0.00</p>
                 <div class="cart-actions">
-                    <button class="close-btn" id="close-cart-btn">Fechar</button>
-                    <a href="#" id="whatsapp-btn" class="whatsapp-btn" target="_blank">
+                    <button class="action-btn close-btn" id="close-cart-btn">Fechar</button>
+                    <a href="#" id="whatsapp-btn" class="action-btn whatsapp-btn" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.8 0-65.7-10.8-94-31.4l-22.5-13.4-69.8 18.3L72 359.2l-14.4-23.2C39.6 302.3 32 264.3 32 226c0-105.6 85.8-191.4 191.4-191.4 52.8 0 102.3 20.5 139.1 57.3 36.8 36.8 57.3 86.3 57.3 139.1-.1 105.6-85.9 191.4-191.5 191.4zm105.9-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
                         <span>Enviar Pedido</span>
                     </a>
                 </div>
             </div>
         </div>
-    </div>
+    </aside>
     
-    <div id="admin-login-panel">
+    <div id="admin-login-panel" class="admin-modal">
         <h2>Área do Administrador</h2>
         <form id="login-form">
             <div class="form-group"><label for="password">Senha</label><input type="password" id="password-input" required></div>
@@ -137,69 +217,225 @@
             const WHATSAPP_NUMBER = "5511999998888"; // <-- COLOQUE SEU NÚMERO AQUI
             const DELIVERY_MINIMUM = 100.00;
             const CORRECT_PASSWORD = "admin123";
-            let products = [
-                { name: 'Café do Sítio 500g', price: '24.99', imageUrl: 'https://i.imgur.com/eNq8v28.png' },
-                { name: 'Arroz Brilhante 5kg', price: '16.99', imageUrl: 'https://i.imgur.com/vj5A3yZ.png' },
-                { name: 'Margarina Qualy 500g', price: '7.49', imageUrl: 'https://i.imgur.com/xPZp5rG.png' },
-                { name: 'Amaciante Downy 500ml', price: '9.99', imageUrl: 'https://i.imgur.com/c6kH8qf.png' },
-                { name: 'Açúcar Pérola 5kg', price: '14.99', imageUrl: 'https://i.imgur.com/Xy1j7aB.png' },
-                { name: 'Leite em Pó Itambé 400g', price: '14.99', imageUrl: 'https://i.imgur.com/S8o2yYQ.png' },
-                { name: 'Óleo de Soja Comigo', price: '7.49', imageUrl: 'https://i.imgur.com/L44fOAE.png' },
-                { name: 'Papel Higiênico Estilo 12 Rolos', price: '9.99', imageUrl: 'https://i.imgur.com/J3t5M6j.png' },
-                { name: 'Sabão em Barra Minuano 900g', price: '10.99', imageUrl: 'https://i.imgur.com/9C0n9s3.png' },
-                { name: 'Ovos 30 Unidades', price: '15.99', imageUrl: 'https://i.imgur.com/q2y4c7t.png' },
-                { name: 'Sabão em Pó Minuano 800g', price: '8.49', imageUrl: 'https://i.imgur.com/P1i1Y8k.png' },
-                { name: 'Água Sanitária Qboa 1L', price: '3.79', imageUrl: 'https://i.imgur.com/9E3D8nN.png' }
-            ];
+            
+            let products = [];
             let cart = [];
             let editingIndex = null;
             
+            // Seletores de Elementos
             const productSection = document.getElementById('product-section'), productGrid = document.getElementById('product-grid'),
-            cartButton = document.getElementById('cart-button'), cartModalOverlay = document.getElementById('cart-modal-overlay'),
-            closeCartBtn = document.getElementById('close-cart-btn'), cartItemsContainer = document.getElementById('cart-items'),
-            cartCount = document.getElementById('cart-count'), cartTotal = document.getElementById('cart-total'),
-            whatsappBtn = document.getElementById('whatsapp-btn'), deliveryOption = document.getElementById('delivery-option'),
-            pickupOption = document.getElementById('pickup-option'), deliveryInfo = document.getElementById('delivery-info'),
-            adminTrigger = document.getElementById('admin-trigger'), adminLoginPanel = document.getElementById('admin-login-panel'),
-            loginForm = document.getElementById('login-form'), adminPanelSection = document.getElementById('admin-panel-section'),
-            addEditForm = document.getElementById('add-edit-form'), formTitle = document.getElementById('form-title'),
-            formSubmitBtn = document.getElementById('form-submit-btn'), adminProductNameInput = document.getElementById('admin-product-name'),
-            adminProductPriceInput = document.getElementById('admin-product-price'), adminProductImageInput = document.getElementById('admin-product-image'),
-            adminProductList = document.getElementById('admin-product-list'), logoutButton = document.getElementById('logout-button');
+            loadingMessage = document.getElementById('loading-message'), cartButton = document.getElementById('cart-button'), 
+            cartModalOverlay = document.getElementById('cart-modal-overlay'), closeCartBtn = document.getElementById('close-cart-btn'), 
+            cartItemsContainer = document.getElementById('cart-items'), cartCount = document.getElementById('cart-count'), 
+            cartTotal = document.getElementById('cart-total'), whatsappBtn = document.getElementById('whatsapp-btn'), 
+            deliveryOption = document.getElementById('delivery-option'), pickupOption = document.getElementById('pickup-option'), 
+            deliveryInfo = document.getElementById('delivery-info'), adminTrigger = document.getElementById('admin-trigger'), 
+            adminLoginPanel = document.getElementById('admin-login-panel'), loginForm = document.getElementById('login-form'), 
+            adminPanelSection = document.getElementById('admin-panel-section'), addEditForm = document.getElementById('add-edit-form'), 
+            formTitle = document.getElementById('form-title'), formSubmitBtn = document.getElementById('form-submit-btn'), 
+            adminProductNameInput = document.getElementById('admin-product-name'), adminProductPriceInput = document.getElementById('admin-product-price'), 
+            adminProductImageInput = document.getElementById('admin-product-image'), adminProductList = document.getElementById('admin-product-list'), 
+            logoutButton = document.getElementById('logout-button');
+
+            // --- CARREGAMENTO DOS PRODUTOS ---
+            async function loadProducts() {
+                try {
+                    // Adicionamos um timestamp para evitar cache em excesso no GitHub Pages
+                    const response = await fetch(`products.json?v=${new Date().getTime()}`);
+                    if (!response.ok) {
+                        throw new Error(`Erro ao carregar produtos: ${response.statusText}`);
+                    }
+                    const productData = await response.json();
+                    products = productData;
+                    loadingMessage.style.display = 'none';
+                    initialize();
+                } catch (error) {
+                    loadingMessage.textContent = 'Não foi possível carregar as ofertas. Tente novamente mais tarde.';
+                    console.error(error);
+                }
+            }
+
+            function initialize() {
+                refreshViews();
+                updateCartView();
+            }
 
             function refreshViews() { renderProducts(); renderAdminView(); }
+
             function renderProducts() {
                 productGrid.innerHTML = '';
-                products.forEach((p, i) => { productGrid.innerHTML += `<div class="product-card"><img src="${p.imageUrl}" alt="${p.name}"><h3 class="product-name">${p.name}</h3><p class="product-price"><span>R$</span>${p.price}</p><button class="add-to-cart-btn" data-index="${i}">Adicionar ao Carrinho</button></div>`; });
+                products.forEach((p, i) => { 
+                    productGrid.innerHTML += `
+                    <div class="product-card">
+                        <img src="${p.imageUrl}" alt="${p.name}">
+                        <h3 class="product-name">${p.name}</h3>
+                        <p class="product-price">R$${parseFloat(p.price).toFixed(2)}</p>
+                        <button class="add-to-cart-btn" data-index="${i}">Adicionar ao Carrinho</button>
+                    </div>`;
+                });
             }
+
             function renderAdminView() {
                 adminProductList.innerHTML = '';
-                products.forEach((p, i) => { adminProductList.innerHTML += `<div class="admin-product-item"><img src="${p.imageUrl}" alt="${p.name}"><p>${p.name} - R$ ${p.price}</p><div class="admin-product-actions"><button class="edit-btn" data-index="${i}">Editar</button><button class="delete-btn" data-index="${i}">Excluir</button></div></div>`; });
+                products.forEach((p, i) => { 
+                    adminProductList.innerHTML += `
+                    <div class="admin-product-item">
+                        <img src="${p.imageUrl}" alt="${p.name}">
+                        <p>${p.name} - R$ ${parseFloat(p.price).toFixed(2)}</p>
+                        <div class="admin-product-actions">
+                            <button class="edit-btn" data-index="${i}">Editar</button>
+                            <button class="delete-btn" data-index="${i}">Excluir</button>
+                        </div>
+                    </div>`;
+                });
             }
+            
             function updateCartView() {
                 cartItemsContainer.innerHTML = ''; let total = 0, itemCount = 0;
-                cart.forEach((item, i) => { let itemTotal = item.product.price * item.quantity; total += itemTotal; itemCount += item.quantity; cartItemsContainer.innerHTML += `<div class="cart-item"><div class="cart-item-info"><p><b>${item.product.name}</b></p><p>R$ ${itemTotal.toFixed(2)}</p></div><div class="cart-item-quantity"><button class="quantity-change" data-index="${i}" data-amount="-1">-</button><span>${item.quantity}</span><button class="quantity-change" data-index="${i}" data-amount="1">+</button></div></div>`; });
-                cartCount.textContent = itemCount; cartTotal.textContent = `Total: R$ ${total.toFixed(2)}`;
-                if (total >= DELIVERY_MINIMUM) { deliveryOption.disabled = false; document.querySelector('label[for="delivery-option"]').style.color = 'var(--dark-text)'; deliveryInfo.textContent = "Sua compra é elegível para entrega!"; }
-                else { deliveryOption.disabled = true; if (deliveryOption.checked) pickupOption.checked = true; document.querySelector('label[for="delivery-option"]').style.color = 'var(--disabled-gray)'; deliveryInfo.textContent = `Faltam R$ ${(DELIVERY_MINIMUM - total).toFixed(2)} para habilitar a entrega.`; }
-                if (cart.length === 0) deliveryInfo.textContent = "Adicione itens ao seu carrinho.";
+                cart.forEach((item, i) => { 
+                    let itemTotal = parseFloat(item.product.price) * item.quantity; 
+                    total += itemTotal; 
+                    itemCount += item.quantity; 
+                    cartItemsContainer.innerHTML += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <p class="item-name">${item.product.name}</p>
+                            <p class="item-price">R$ ${itemTotal.toFixed(2)}</p>
+                        </div>
+                        <div class="cart-item-quantity">
+                            <button class="quantity-change" data-index="${i}" data-amount="-1">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="quantity-change" data-index="${i}" data-amount="1">+</button>
+                        </div>
+                    </div>`; 
+                });
+                cartCount.textContent = itemCount; 
+                cartTotal.textContent = `Total: R$ ${total.toFixed(2)}`;
+                
+                if (total >= DELIVERY_MINIMUM) { 
+                    deliveryOption.disabled = false; 
+                    document.querySelector('label[for="delivery-option"]').style.color = 'var(--dark-text)'; 
+                    deliveryInfo.textContent = "Sua compra é elegível para entrega!"; 
+                } else { 
+                    deliveryOption.disabled = true; 
+                    if (deliveryOption.checked) pickupOption.checked = true; 
+                    document.querySelector('label[for="delivery-option"]').style.color = 'var(--disabled-gray)'; 
+                    deliveryInfo.textContent = `Faltam R$ ${(DELIVERY_MINIMUM - total).toFixed(2)} para habilitar a entrega.`; 
+                }
+                if (cart.length === 0) {
+                    deliveryInfo.textContent = "Seu carrinho está vazio.";
+                    cartItemsContainer.innerHTML = '<p style="text-align:center; color:#777;">Adicione produtos para vê-los aqui.</p>';
+                }
                 updateWhatsAppLink();
             }
-            function addToCart(i) { const p = products[i], e = cart.find(item => item.product.name === p.name); if (e) e.quantity++; else cart.push({ product: p, quantity: 1 }); updateCartView(); }
-            function changeQuantity(i, a) { if (cart[i]) { cart[i].quantity += a; if (cart[i].quantity <= 0) cart.splice(i, 1); } updateCartView(); }
-            function updateWhatsAppLink() {
-                if (cart.length === 0) { whatsappBtn.style.display = 'none'; return; }
-                whatsappBtn.style.display = 'flex'; const m = document.querySelector('input[name="delivery_method"]:checked').value; let msg = `Olá! Gostaria de fazer o seguinte pedido:\n\n*Opção Escolhida: ${m}*\n\n`; let t = 0;
-                cart.forEach(item => { msg += `*${item.quantity}x* - ${item.product.name}\n`; t += item.product.price * item.quantity; });
-                msg += `\n*Total: R$ ${t.toFixed(2)}*`; whatsappBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-            }
-            function sendOrder() { if (cart.length === 0) return; alert("Obrigado pelo seu pedido! Você será redirecionado para o WhatsApp para finalizar."); cart = []; updateCartView(); cartModalOverlay.style.display = 'none'; }
-            function handleAdminLogin(e) { e.preventDefault(); if (document.getElementById('password-input').value === CORRECT_PASSWORD) { adminLoginPanel.style.display = 'none'; productSection.style.display = 'none'; adminPanelSection.style.display = 'block'; document.getElementById('password-input').value = ''; } else { alert('Senha incorreta!'); } }
-            function handleLogout() { adminPanelSection.style.display = 'none'; productSection.style.display = 'block'; resetForm(); }
-            function handleFormSubmit(e) { e.preventDefault(); const p = { name: adminProductNameInput.value, price: parseFloat(adminProductPriceInput.value).toFixed(2), imageUrl: adminProductImageInput.value }; if (editingIndex === null) products.push(p); else products[editingIndex] = p; resetForm(); refreshViews(); }
-            function handleAdminListClick(e) { const t = e.target, i = parseInt(t.dataset.index); if (t.classList.contains('delete-btn')) { if (confirm('Tem certeza?')) { products.splice(i, 1); refreshViews(); } } if (t.classList.contains('edit-btn')) { const p = products[i]; adminProductNameInput.value = p.name; adminProductPriceInput.value = p.price; adminProductImageInput.value = p.imageUrl; editingIndex = i; formTitle.textContent = 'Editando Produto'; formSubmitBtn.textContent = 'Salvar Alterações'; formTitle.scrollIntoView({ behavior: 'smooth' }); } }
-            function resetForm() { addEditForm.reset(); editingIndex = null; formTitle.textContent = 'Adicionar Novo Produto'; formSubmitBtn.textContent = 'Adicionar Produto'; }
             
+            function addToCart(index) { 
+                const product = products[index];
+                const existingItem = cart.find(item => item.product.name === product.name); 
+                if (existingItem) {
+                    existingItem.quantity++; 
+                } else {
+                    cart.push({ product: product, quantity: 1 }); 
+                }
+                updateCartView(); 
+            }
+            
+            function changeQuantity(index, amount) { 
+                if (cart[index]) { 
+                    cart[index].quantity += amount; 
+                    if (cart[index].quantity <= 0) cart.splice(index, 1); 
+                } 
+                updateCartView(); 
+            }
+
+            function updateWhatsAppLink() {
+                if (cart.length === 0) {
+                    whatsappBtn.style.display = 'none';
+                    return;
+                }
+                whatsappBtn.style.display = 'flex';
+                const deliveryMethod = document.querySelector('input[name="delivery_method"]:checked').value;
+                let message = `Olá! Gostaria de fazer o seguinte pedido:\n\n*Opção Escolhida: ${deliveryMethod}*\n\n`;
+                let total = 0;
+                cart.forEach(item => {
+                    message += `*${item.quantity}x* - ${item.product.name}\n`;
+                    total += parseFloat(item.product.price) * item.quantity;
+                });
+                message += `\n*Total: R$ ${total.toFixed(2)}*`;
+                whatsappBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+            }
+            
+            function sendOrder() { 
+                if (cart.length === 0) return; 
+                alert("Obrigado pelo seu pedido! Você será redirecionado para o WhatsApp para finalizar."); 
+                cart = []; 
+                updateCartView(); 
+                cartModalOverlay.style.display = 'none'; 
+            }
+            
+            function handleAdminLogin(e) { 
+                e.preventDefault(); 
+                if (document.getElementById('password-input').value === CORRECT_PASSWORD) { 
+                    adminLoginPanel.style.display = 'none'; 
+                    productSection.style.display = 'none'; 
+                    adminPanelSection.style.display = 'block'; 
+                    document.getElementById('password-input').value = ''; 
+                } else { 
+                    alert('Senha incorreta!'); 
+                } 
+            }
+            
+            function handleLogout() { 
+                adminPanelSection.style.display = 'none'; 
+                productSection.style.display = 'block'; 
+                resetForm(); 
+            }
+            
+            function handleFormSubmit(e) { 
+                e.preventDefault(); 
+                const product = { 
+                    name: adminProductNameInput.value, 
+                    price: parseFloat(adminProductPriceInput.value).toFixed(2), 
+                    imageUrl: adminProductImageInput.value 
+                }; 
+                if (editingIndex === null) {
+                    products.push(product); 
+                } else {
+                    products[editingIndex] = product; 
+                }
+                resetForm(); 
+                refreshViews(); 
+            }
+            
+            function handleAdminListClick(e) { 
+                const target = e.target;
+                const index = parseInt(target.dataset.index);
+                if (target.classList.contains('delete-btn')) { 
+                    if (confirm('Tem certeza que deseja excluir este produto (apenas na simulação)?')) { 
+                        products.splice(index, 1);
+                        refreshViews(); 
+                    } 
+                } 
+                if (target.classList.contains('edit-btn')) { 
+                    const product = products[index]; 
+                    adminProductNameInput.value = product.name; 
+                    adminProductPriceInput.value = product.price; 
+                    adminProductImageInput.value = product.imageUrl; 
+                    editingIndex = index; 
+                    formTitle.textContent = 'Editando Produto (Simulação)'; 
+                    formSubmitBtn.textContent = 'Salvar Alterações'; 
+                    formTitle.scrollIntoView({ behavior: 'smooth' }); 
+                } 
+            }
+            
+            function resetForm() { 
+                addEditForm.reset(); 
+                editingIndex = null; 
+                formTitle.textContent = 'Adicionar Novo Produto (Simulação)'; 
+                formSubmitBtn.textContent = 'Adicionar Produto'; 
+            }
+            
+            // Event Listeners
             productGrid.addEventListener('click', e => e.target.classList.contains('add-to-cart-btn') && addToCart(parseInt(e.target.dataset.index)));
             cartButton.addEventListener('click', () => cartModalOverlay.style.display = 'block');
             closeCartBtn.addEventListener('click', () => cartModalOverlay.style.display = 'none');
@@ -207,14 +443,14 @@
             cartItemsContainer.addEventListener('click', e => e.target.classList.contains('quantity-change') && changeQuantity(parseInt(e.target.dataset.index), parseInt(e.target.dataset.amount)));
             document.querySelectorAll('input[name="delivery_method"]').forEach(r => r.addEventListener('change', updateWhatsAppLink));
             whatsappBtn.addEventListener('click', sendOrder);
-            adminTrigger.addEventListener('click', () => adminLoginPanel.style.display = 'block');
+            adminTrigger.addEventListener('click', () => { adminLoginPanel.style.display = 'block'; document.getElementById('password-input').focus(); });
             loginForm.addEventListener('submit', handleAdminLogin);
             logoutButton.addEventListener('click', handleLogout);
             addEditForm.addEventListener('submit', handleFormSubmit);
             adminProductList.addEventListener('click', handleAdminListClick);
             
-            refreshViews();
-            updateCartView();
+            // Inicia o carregamento dos produtos
+            loadProducts();
         });
     </script>
 </body>

@@ -1,0 +1,78 @@
+[
+  {
+    "name": "Café do Sítio 500g",
+    "price": "24.99",
+    "imageUrl": "https://i.imgur.com/eNq8v28.png"
+  },
+  {
+    "name": "Arroz Brilhante 5kg",
+    "price": "16.99",
+    "imageUrl": "https://i.imgur.com/vj5A3yZ.png"
+  },
+  {
+    "name": "Margarina Qualy 500g",
+    "price": "7.49",
+    "imageUrl": "https://i.imgur.com/xPZp5rG.png"
+  },
+  {
+    "name": "Amaciante Downy 500ml",
+    "price": "9.99",
+    "imageUrl": "https://i.imgur.com/c6kH8qf.png"
+  },
+  {
+    "name": "Açúcar Pérola 5kg",
+    "price": "14.99",
+    "imageUrl": "https://i.imgur.com/Xy1j7aB.png"
+  },
+  {
+    "name": "Leite em Pó Itambé 400g",
+    "price": "14.99",
+    "imageUrl": "https://i.imgur.com/S8o2yYQ.png"
+  },
+  {
+    "name": "Óleo de Soja Comigo",
+    "price": "7.49",
+    "imageUrl": "https://i.imgur.com/L44fOAE.png"
+  },
+  {
+    "name": "Papel Higiênico Estilo 12 Rolos",
+    "price": "9.99",
+    "imageUrl": "https://i.imgur.com/J3t5M6j.png"
+  },
+  {
+    "name": "Sabão em Barra Minuano 900g",
+    "price": "10.99",
+    "imageUrl": "https://i.imgur.com/9C0n9s3.png"
+  },
+  {
+    "name": "Ovos 30 Unidades",
+    "price": "15.99",
+    "imageUrl": "https://i.imgur.com/q2y4c7t.png"
+  },
+  {
+    "name": "Sabão em Pó Minuano 800g",
+    "price": "8.49",
+    "imageUrl": "https://i.imgur.com/P1i1Y8k.png"
+  },
+  {
+    "name": "Água Sanitária Qboa 1L",
+    "price": "3.79",
+    "imageUrl": "https://i.imgur.com/9E3D8nN.png"
+  }
+]```
+
+---
+
+### Passo 3: Como Usar e Atualizar no GitHub
+
+1.  **Envie os Arquivos:** Vá para o seu repositório no GitHub e faça o upload dos dois arquivos: `index.html` e `products.json`.
+2.  **Ative o GitHub Pages:** Se ainda não o fez, vá em **Settings > Pages**, selecione a branch `main` e clique em **Save**. Seu site estará no ar.
+3.  **PARA ATUALIZAR OS PRODUTOS (O NOVO PROCESSO):**
+    *   No GitHub, clique no arquivo `products.json`.
+    *   Clique no ícone de lápis (✏️) no canto direito para editar o arquivo.
+    *   **Para alterar um preço:** Simplesmente mude o valor dentro das aspas em `"price"`.
+    *   **Para adicionar um produto:** Copie um bloco inteiro de `{` até `}` (incluindo a vírgula final), cole-o no final da lista e edite as informações.
+    *   **Para remover um produto:** Delete o bloco inteiro do produto, desde `{` até `}` e a vírgula que o sucede.
+    *   Quando terminar, role para baixo, e clique no botão verde **"Commit changes"**.
+
+Dentro de um ou dois minutos, seu site ao vivo estará atualizado com os novos preços e produtos para todos os clientes.
